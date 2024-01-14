@@ -1,5 +1,6 @@
 #include <iostream>
 #include <limits>
+#include <vector>
 #include "ttt.hpp"
 
 using namespace std;
@@ -9,19 +10,28 @@ int col;
 // These variables are declared in ttt.hpp
 string player_name_1;
 string player_name_2;
-int winner = 0;
+char player_1 = 'X';
+char player_2 = 'O';
+char winner = ' ';
 
-char board[3][3] = {{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}};
+// creates the board
+vector<vector<char>> board(3, vector<char>(3, ' '));
 
 // prints the TIC TAC TOE board
 void printboard()
 {
-    cout << "  0   1   2" << endl; // "   0   1   2
-    cout << "0 " << board[0][0] << " | " << board[1][0] << " | " << board[2][0] << endl;
-    cout << "  __________" << endl;
-    cout << "1 " << board[0][1] << " | " << board[1][1] << " | " << board[2][1] << endl;
-    cout << "  __________" << endl;
-    cout << "2 " << board[0][2] << " | " << board[1][2] << " | " << board[2][2] << endl;
+    int row_header = 0;
+    cout << "    0   1   2\n";
+    for (const auto &row : board)
+    {
+        cout << row_header;
+        for (char cell : row)
+        {
+            cout << " | " << cell;
+        }
+        cout << '\n';
+        row_header++;
+    }
 }
 
 // prints the game intro and rules
@@ -45,8 +55,8 @@ void playerNames()
     cout << "Hello " << player_name_2 << ", you are O." << endl;
 }
 
-// gets the player X's move and checks to make sure it is valid
-int movex()
+// gets the player move and checks to make sure it is valid
+int makeMove(char player)
 {
     while (true)
     {
@@ -70,46 +80,9 @@ int movex()
             continue;
         }
 
-        if (col >= 0 && col <= 2 && row >= 0 && row <= 2 && board[col][row] == ' ')
+        if (col >= 0 && col <= 2 && row >= 0 && row <= 2 && board[row][col] == ' ')
         {
-            board[col][row] = 'X';
-            return 0; // This return statement breaks out of the loop
-        }
-        else
-        {
-            cout << "Invalid move. Try again." << endl;
-        }
-    }
-}
-
-// gets the player O's move and checks to make sure it is valid
-int moveo()
-{
-    while (true)
-    {
-        cout << "Column:";
-        if (!(cin >> col))
-        {
-            // Input operation failed (non-integer entered)
-            cout << "Invalid input. Please enter an integer for the column." << endl;
-            cin.clear();                                         // Clear the error state
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore the invalid input
-            continue;
-        }
-
-        cout << "Row:";
-        if (!(cin >> row))
-        {
-            // Input operation failed (non-integer entered)
-            cout << "Invalid input. Please enter an integer for the row." << endl;
-            cin.clear();                                         // Clear the error state
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore the invalid input
-            continue;
-        }
-
-        if (col >= 0 && col <= 2 && row >= 0 && row <= 2 && board[col][row] == ' ')
-        {
-            board[col][row] = 'O';
+            board[row][col] = player;
             return 0; // This return statement breaks out of the loop
         }
         else
@@ -120,107 +93,37 @@ int moveo()
 }
 
 // checks to see if there is a winner
-void checkwinner()
+bool isWinner(char player)
 {
-    if (board[0][0] != ' ' && board[0][0] == board[1][0] && board[1][0] == board[2][0])
+    // check rows and columns for winner
+    for (int i = 0; i < 3; i++)
     {
-        if (board[0][0] == 'X')
+        if ((board[i][0] == player && board[i][1] == player && board[i][2] == player) || (board[0][i] == player && board[1][i] == player && board[2][i] == player))
         {
-            winner = 1;
-        }
-        else
-        {
-            winner = 2;
+            winner = player;
+            return true;
         }
     }
-    else if (board[0][1] != ' ' && board[0][1] == board[1][1] && board[1][1] == board[2][1])
+
+    // check diagonals for winner
+    if ((board[0][0] == player && board[1][1] == player && board[2][2] == player) || (board[0][2] == player && board[1][1] == player && board[2][0] == player))
     {
-        if (board[0][1] == 'X')
-        {
-            winner = 1;
-        }
-        else
-        {
-            winner = 2;
-        }
+        winner = player;
+        return true;
     }
-    else if (board[0][2] != ' ' && board[0][2] == board[1][2] && board[1][2] == board[2][2])
-    {
-        if (board[0][2] == 'X')
-        {
-            winner = 1;
-        }
-        else
-        {
-            winner = 2;
-        }
-    }
-    else if (board[0][0] != ' ' && board[0][0] == board[0][1] && board[0][1] == board[0][2])
-    {
-        if (board[0][0] == 'X')
-        {
-            winner = 1;
-        }
-        else
-        {
-            winner = 2;
-        }
-    }
-    else if (board[1][0] != ' ' && board[1][0] == board[1][1] && board[1][1] == board[1][2])
-    {
-        if (board[1][0] == 'X')
-        {
-            winner = 1;
-        }
-        else
-        {
-            winner = 2;
-        }
-    }
-    else if (board[2][0] != ' ' && board[2][0] == board[2][1] && board[2][1] == board[2][2])
-    {
-        if (board[2][0] == 'X')
-        {
-            winner = 1;
-        }
-        else
-        {
-            winner = 2;
-        }
-    }
-    else if (board[0][0] != ' ' && board[0][0] == board[1][1] && board[1][1] == board[2][2])
-    {
-        if (board[0][0] == 'X')
-        {
-            winner = 1;
-        }
-        else
-        {
-            winner = 2;
-        }
-    }
-    else if (board[0][2] != ' ' && board[0][2] == board[1][1] && board[1][1] == board[2][0])
-    {
-        if (board[0][2] == 'X')
-        {
-            winner = 1;
-        }
-        else
-        {
-            winner = 2;
-        }
-    }
+
+    return false;
 }
 
 // prints the winner
 void showwinner()
 {
-    if (winner == 1)
+    if (winner == 'X')
     {
         cout << "Congrats " << player_name_1 << "! X wins!" << endl;
         system("PAUSE>nul");
     }
-    else if (winner == 2)
+    else if (winner == 'O')
     {
         cout << "Congrats " << player_name_2 << "! O wins!" << endl;
         system("PAUSE>nul");

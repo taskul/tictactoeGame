@@ -9,20 +9,21 @@ int main()
     gameIntro();
     playerNames();
 
-    while (winner == 0)
+    while (winner == ' ')
     {
         printboard();
         cout << player_name_1 << " turn" << endl;
-        movex();
+        makeMove(player_1);
         printboard();
-        checkwinner();
-        if (winner == 0)
+
+        if (!isWinner(player_1))
         {
             cout << player_name_2 << " turn" << endl;
-            moveo();
+            makeMove(player_2);
             printboard();
-            checkwinner();
+            isWinner(player_2);
         }
     }
+    // shows the winner if there is one
     showwinner();
 }

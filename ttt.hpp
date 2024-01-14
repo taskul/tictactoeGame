@@ -8,7 +8,9 @@ using namespace std;
 // ttt.hpp is just passing them to ttt.cpp
 extern string player_name_1;
 extern string player_name_2;
-extern int winner;
+extern char player_1;
+extern char player_2;
+extern char winner;
 #endif
 
 // prints the TIC TAC TOE board
@@ -17,11 +19,9 @@ void printboard();
 void gameIntro();
 // assigns player names
 void playerNames();
-// gets the player X's move and checks to make sure it is valid
-int movex();
-// gets the player O's move and checks to make sure it is valid
-int moveo();
+// gets the player's move and checks to make sure it is valid
+int makeMove(char player);
 // checks to see if there is a winner
-void checkwinner();
+bool isWinner(char player);
 // prints the winner
 void showwinner();
